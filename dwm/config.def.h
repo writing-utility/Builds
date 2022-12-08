@@ -7,8 +7,8 @@ static const unsigned int snap = 32; /* snap pixel */
 static const int showbar = 1; /* 0 means no bar */
 static const int topbar = 1; /* 0 means bottom bar */
 static const int horizpadbar, vertpadbar = 6; /* padding for statusbar */
-static const char *fonts[] = { "FiraCode:size=10" };
-static const char dmenufont[] = "FiraCode:size=10";
+static const char *fonts[] = { "monospace:size=10" };
+static const char dmenufont[] = "monospace:size=10";
 static const char col1[] = "#2d3036";
 static const char col2[] = "#7f8388";
 static const char col3[] = "#d3dae3";
@@ -20,7 +20,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
 
 static const Rule rules[] = {
 	/* xprop(1):

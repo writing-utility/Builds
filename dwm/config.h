@@ -7,8 +7,8 @@ static const unsigned int snap = 32; /* snap pixel */
 static const int showbar = 1; /* 0 means no bar */
 static const int topbar = 1; /* 0 means bottom bar */
 static const int horizpadbar, vertpadbar = 6; /* padding for statusbar */
-static const char *fonts[] = { "FiraCode:size=10" };
-static const char dmenufont[] = "FiraCode:size=10";
+static const char *fonts[] = { "monospace:size=10" };
+static const char dmenufont[] = "monospace:size=10";
 static const char col1[] = "#2d3036";
 static const char col2[] = "#7f8388";
 static const char col3[] = "#d3dae3";
@@ -20,7 +20,7 @@ static const char *colors[][3]      = {
 };
 
 /* tagging */
-static const char *tags[] = { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+static const char *tags[] = { "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX" };
 
 static const Rule rules[] = {
 	/* xprop(1):
@@ -66,14 +66,11 @@ static const char *dmenucmd[] = { "dmenu_run",
   "-sf", col3, 
 NULL };
 static const char *termcmd[]  = { "alacritty", NULL };
-static const char *browsercmd[]  = { "qutebrowser", NULL };
 
 static const Key keys[] = {
 	/* modifier                     key           function        argument */
 	{ MODKEY,                       XK_p,         spawn,          {.v = dmenucmd } },
 	{ MODKEY|ShiftMask,             XK_Return,    spawn,          {.v = termcmd } },
-	{ MODKEY|ShiftMask,             XK_b,         spawn,          {.v = browsercmd } },
-	//{ MODKEY,                       XK_b,         spawn,          SHCMD("~/.scripts/dmenu/dmenu_surf" },
 	//{ MODKEY,                       XK_b,         togglebar,      {0} },
 	{ MODKEY,                       XK_j,         focusstack,     {.i = +1 } },
 	{ MODKEY,                       XK_k,         focusstack,     {.i = -1 } },
@@ -91,10 +88,10 @@ static const Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_space,     togglefloating, {0} },
 	{ MODKEY,                       XK_agrave,    view,           {.ui = ~0 } },
 	{ MODKEY|ShiftMask,             XK_agrave,    tag,            {.ui = ~0 } },
-	{ MODKEY,                       XK_comma,     focusmon,       {.i = -1 } },
-	{ MODKEY,                       XK_semicolon, focusmon,       {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 } },
-	{ MODKEY|ShiftMask,             XK_semicolon, tagmon,         {.i = +1 } },
+	//{ MODKEY,                       XK_comma,     focusmon,       {.i = -1 } },
+	//{ MODKEY,                       XK_semicolon, focusmon,       {.i = +1 } },
+	//{ MODKEY|ShiftMask,             XK_comma,     tagmon,         {.i = -1 } },
+	//{ MODKEY|ShiftMask,             XK_semicolon, tagmon,         {.i = +1 } },
 	{ MODKEY,                       XK_equal,     setgaps,        {.i = +1 } },
 	{ MODKEY|ControlMask,           XK_equal,     setgaps,        {.i = -1  } },
 	TAGKEYS(                        XK_ampersand,                 0)
