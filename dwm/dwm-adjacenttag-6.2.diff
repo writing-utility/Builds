@@ -1,0 +1,160 @@
+From: <Saved by Blink>
+Snapshot-Content-Location: https://dwm.suckless.org/patches/adjacenttag/dwm-adjacenttag-6.2.diff
+Subject: 
+Date: Sun, 25 Dec 2022 13:12:41 -0000
+MIME-Version: 1.0
+Content-Type: multipart/related;
+	type="text/html";
+	boundary="----MultipartBoundary--bSKSaggqnH45oS5l4xrXnQbRlXycKrhdoHdbU4cIkf----"
+
+
+------MultipartBoundary--bSKSaggqnH45oS5l4xrXnQbRlXycKrhdoHdbU4cIkf----
+Content-Type: text/html
+Content-ID: <frame-178A7EBF0A468C843B9C12CE213A72B9@mhtml.blink>
+Content-Transfer-Encoding: quoted-printable
+Content-Location: https://dwm.suckless.org/patches/adjacenttag/dwm-adjacenttag-6.2.diff
+
+<html><head><meta http-equiv=3D"Content-Type" content=3D"text/html; charset=
+=3Dwindows-1252"><link rel=3D"stylesheet" type=3D"text/css" href=3D"cid:css=
+-077c4596-396b-4a10-bc0d-38638de62d06@mhtml.blink" /></head><body><pre styl=
+e=3D"word-wrap: break-word; white-space: pre-wrap;">diff -up a/config.def.h=
+ b/config.def.h
+--- a/config.def.h	2021-10-02 13:57:18.011307099 +0100
++++ b/config.def.h	2021-10-02 13:58:07.812080253 +0100
+@@ -84,6 +84,10 @@ static Key keys[] =3D {
+ 	{ MODKEY,                       XK_period, focusmon,       {.i =3D +1 } }=
+,
+ 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i =3D -1 } }=
+,
+ 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i =3D +1 } }=
+,
++	{ MODKEY,                       XK_Right,  viewnext,       {0} },
++	{ MODKEY,                       XK_Left,   viewprev,       {0} },
++	{ MODKEY|ShiftMask,             XK_Right,  tagtonext,      {0} },
++	{ MODKEY|ShiftMask,             XK_Left,   tagtoprev,      {0} },
+ 	TAGKEYS(                        XK_1,                      0)
+ 	TAGKEYS(                        XK_2,                      1)
+ 	TAGKEYS(                        XK_3,                      2)
+diff -up a/dwm.c b/dwm.c
+--- a/dwm.c	2021-10-02 13:57:18.011307099 +0100
++++ b/dwm.c	2021-10-02 14:21:17.063622953 +0100
+@@ -183,8 +183,10 @@ static void maprequest(XEvent *e);
+ static void monocle(Monitor *m);
+ static void motionnotify(XEvent *e);
+ static void movemouse(const Arg *arg);
++static unsigned int nexttag(void);
+ static Client *nexttiled(Client *c);
+ static void pop(Client *);
++static unsigned int prevtag(void);
+ static void propertynotify(XEvent *e);
+ static void quit(const Arg *arg);
+ static Monitor *recttomon(int x, int y, int w, int h);
+@@ -208,6 +210,8 @@ static void sigchld(int unused);
+ static void spawn(const Arg *arg);
+ static void tag(const Arg *arg);
+ static void tagmon(const Arg *arg);
++static void tagtonext(const Arg *arg);
++static void tagtoprev(const Arg *arg);
+ static void tile(Monitor *);
+ static void togglebar(const Arg *arg);
+ static void togglefloating(const Arg *arg);
+@@ -227,6 +231,8 @@ static void updatetitle(Client *c);
+ static void updatewindowtype(Client *c);
+ static void updatewmhints(Client *c);
+ static void view(const Arg *arg);
++static void viewnext(const Arg *arg);
++static void viewprev(const Arg *arg);
+ static Client *wintoclient(Window w);
+ static Monitor *wintomon(Window w);
+ static int xerror(Display *dpy, XErrorEvent *ee);
+@@ -1192,6 +1198,13 @@ movemouse(const Arg *arg)
+ 	}
+ }
+=20
++unsigned int
++nexttag(void)
++{
++	unsigned int seltag =3D selmon-&gt;tagset[selmon-&gt;seltags];
++	return seltag =3D=3D (1 &lt;&lt; (LENGTH(tags) - 1)) ? 1 : seltag &lt;&lt=
+; 1;
++}
++
+ Client *
+ nexttiled(Client *c)
+ {
+@@ -1208,6 +1221,13 @@ pop(Client *c)
+ 	arrange(c-&gt;mon);
+ }
+=20
++unsigned int
++prevtag(void)
++{
++	unsigned int seltag =3D selmon-&gt;tagset[selmon-&gt;seltags];
++	return seltag =3D=3D 1 ? (1 &lt;&lt; (LENGTH(tags) - 1)) : seltag &gt;&gt=
+; 1;
++}
++
+ void
+ propertynotify(XEvent *e)
+ {
+@@ -1671,6 +1691,32 @@ tagmon(const Arg *arg)
+ }
+=20
+ void
++tagtonext(const Arg *arg)
++{
++	unsigned int tmp;
++
++	if (selmon-&gt;sel =3D=3D NULL)
++		return;
++
++	tmp =3D nexttag();
++	tag(&amp;(const Arg){.ui =3D tmp });
++	view(&amp;(const Arg){.ui =3D tmp });
++}
++
++void
++tagtoprev(const Arg *arg)
++{
++	unsigned int tmp;
++
++	if (selmon-&gt;sel =3D=3D NULL)
++		return;
++
++	tmp =3D prevtag();
++	tag(&amp;(const Arg){.ui =3D tmp });
++	view(&amp;(const Arg){.ui =3D tmp });
++}
++
++void
+ tile(Monitor *m)
+ {
+ 	unsigned int i, n, h, mw, my, ty;
+@@ -2044,6 +2090,18 @@ view(const Arg *arg)
+ 	arrange(selmon);
+ }
+=20
++void
++viewnext(const Arg *arg)
++{
++	view(&amp;(const Arg){.ui =3D nexttag()});
++}
++
++void
++viewprev(const Arg *arg)
++{
++	view(&amp;(const Arg){.ui =3D prevtag()});
++}
++=20
+ Client *
+ wintoclient(Window w)
+ {
+</pre></body></html>
+------MultipartBoundary--bSKSaggqnH45oS5l4xrXnQbRlXycKrhdoHdbU4cIkf----
+Content-Type: text/css
+Content-Transfer-Encoding: quoted-printable
+Content-Location: cid:css-077c4596-396b-4a10-bc0d-38638de62d06@mhtml.blink
+
+@charset "utf-8";
+=0A
+------MultipartBoundary--bSKSaggqnH45oS5l4xrXnQbRlXycKrhdoHdbU4cIkf------
